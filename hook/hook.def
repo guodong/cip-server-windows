@@ -1,0 +1,4 @@
+LIBRARY "hook"
+EXPORTS
+	InstallHook @1
+	UninstallHook @2

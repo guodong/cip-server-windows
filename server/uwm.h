@@ -1,0 +1,9 @@
+#pragma once
+#define UWM_DEBUG (WM_APP)
+#define UWM_CREATE_WINDOW (WM_APP + 1)
+#define UWM_SHOW_WINDOW (WM_APP + 2)
+#define UWM_HIDE_WINDOW (WM_APP + 3)
+#define UWM_DESTROY_WINDOW (WM_APP + 4)
+#define UWM_PAINT_WINDOW (WM_APP + 5)
+#define UWM_MOVE_WINDOW (WM_APP + 6)
+#define UWM_COMMAND_WINDOW (WM_APP + 7)
