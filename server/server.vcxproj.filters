@@ -36,6 +36,24 @@
     <ClInclude Include="uwm.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="cip.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cip_channel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cip_defs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cip_protocol.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cip_session.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cip_window.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +63,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WebsocketServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cip_window.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

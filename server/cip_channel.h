@@ -9,3 +9,9 @@ typedef struct cip_channel{
 	void *handle; // io handle of channel
 	cip_session_t *session;
 } cip_channel_t;
+
+typedef struct
+{
+	int id;
+	char name[64];
+} cip_channel_def_t;

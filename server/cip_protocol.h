@@ -55,6 +55,7 @@ enum CIP_EVENT {
 	CIP_EVENT_WINDOW_FRAME_LISTEN = 12,
 	CIP_EVENT_WINDOW_FRAME_UNLISTEN,
 	CIP_EVENT_WINDOW_SHOW_READY,
+	CIP_EVENT_WINDOW_FRAME
 };
 typedef struct {
 	u8 type;
@@ -92,6 +93,11 @@ typedef struct {
 	u32 wid;
 	u32 length;
 } cip_event_window_frame_t;
+
+typedef struct {
+	u8 type;
+	u32 wid;
+} cip_event_window_frame_ws_t;
 /* bellow is event from client */
 typedef struct {
 	u8 type;

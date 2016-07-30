@@ -7,3 +7,4 @@
 #define UWM_PAINT_WINDOW (WM_APP + 5)
 #define UWM_MOVE_WINDOW (WM_APP + 6)
 #define UWM_COMMAND_WINDOW (WM_APP + 7)
+#define UWM_BLINK (WM_APP + 8)

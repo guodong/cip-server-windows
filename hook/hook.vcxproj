@@ -75,7 +75,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>C:\boost_1_61_0;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Administrator\Documents\Visual Studio 2015\Projects\cip-server-windows\server;C:\websocketpp-master\websocketpp-master;C:\Boost\include\boost-1_61;$(IncludePath)</IncludePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <IncludePath>C:\Users\Administrator\Documents\Visual Studio 2015\Projects\cip-server-windows\server;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

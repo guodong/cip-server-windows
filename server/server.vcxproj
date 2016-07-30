@@ -74,8 +74,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Administrator\Documents\Visual Studio 2015\Projects\cip-server-windows\cip;C:\Boost\include\boost-1_61;C:\websocketpp-master\websocketpp-master;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\boost_1_61_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\x264;C:\Users\Administrator\Documents\Visual Studio 2015\Projects\cip-server-windows\cip;C:\Boost\include\boost-1_61;C:\websocketpp-master\websocketpp-master;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\x264;C:\boost_1_61_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>C:\x264-64;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -110,6 +111,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\x264;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libx264.lib;Msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -150,6 +153,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cip.h" />
+    <ClInclude Include="cip_channel.h" />
+    <ClInclude Include="cip_defs.h" />
+    <ClInclude Include="cip_protocol.h" />
+    <ClInclude Include="cip_session.h" />
+    <ClInclude Include="cip_window.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="stdafx.h" />
@@ -158,6 +167,7 @@
     <ClInclude Include="WebsocketServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cip_window.cpp" />
     <ClCompile Include="server.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
