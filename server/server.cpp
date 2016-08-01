@@ -15,6 +15,8 @@
 #include "cip_window.h"
 #include "x264.h"
 
+#define __DEV
+
 using namespace std;
 
 cip_context_t cip_context;
@@ -215,6 +217,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: 在此放置代码。
+#ifdef __DEV
+	TCHAR username[50];
+	DWORD usernameSize = 50;
+	GetUserName(username, &usernameSize);
+	if (_tcscmp(username, _T("Administrator")) == 0) {
+		return 0;
+	}
+#endif
 
 	boost::thread thrd(&WsServerThread);
 	//Sleep(1000);
