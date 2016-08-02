@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "env.h"
 #include <websocketpp/config/asio_no_tls.hpp>
 
 #include <websocketpp/server.hpp>
@@ -11,7 +12,9 @@
 using namespace std;
 
 using websocketpp::lib::lock_guard;
+using websocketpp::lib::error_code;
 
+extern HANDLE hPipe;
 
 void WebsocketServer::run(uint16_t port)
 {
@@ -20,6 +23,21 @@ void WebsocketServer::run(uint16_t port)
 
 	// Start the server accept loop
 	m_server.start_accept();
+#ifndef __DEV
+	websocketpp::lib::asio::error_code ec;
+	unsigned short pt = m_server.get_local_endpoint(ec).port(); 
+	std::stringstream ss;
+	ss << pt;
+	ss.seekg(0, ios::end);
+	int size = ss.tellg();
+	DWORD written;
+	WriteFile(
+		hPipe,
+		(LPCVOID)(ss.rdbuf()),
+		size,
+		&written,
+		NULL);
+#endif
 
 	// Start the ASIO io_service run loop
 	try {

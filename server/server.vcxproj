@@ -159,6 +159,7 @@
     <ClInclude Include="cip_protocol.h" />
     <ClInclude Include="cip_session.h" />
     <ClInclude Include="cip_window.h" />
+    <ClInclude Include="env.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="stdafx.h" />

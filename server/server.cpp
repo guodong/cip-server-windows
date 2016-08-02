@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "env.h"
 #include <string>
 #include <fstream>
 #include <stdlib.h>
@@ -15,7 +16,6 @@
 #include "cip_window.h"
 #include "x264.h"
 
-#define __DEV
 
 using namespace std;
 
@@ -30,7 +30,7 @@ typedef BOOL(CALLBACK *UNINSTALLHOOK)();
 
 void WsServerThread()
 {
-	wsServer.run(9002);
+	wsServer.run(0);
 }
 
 #define MAX_LOADSTRING 100
@@ -46,77 +46,6 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
-
-void CaptureScreen(HWND window, const char* filename)
-{
-	// get screen rectangle
-	RECT windowRect;
-	int ret = 0;
-	ret = GetWindowRect(window, &windowRect);
-	DWORD d = GetLastError();
-	// bitmap dimensions
-	int bitmap_dx = windowRect.right - windowRect.left;
-	int bitmap_dy = windowRect.bottom - windowRect.top;
-
-	// create file
-	ofstream file(filename, ios::binary);
-	if (!file) return;
-
-	// save bitmap file headers
-	BITMAPFILEHEADER fileHeader;
-	BITMAPINFOHEADER infoHeader;
-
-	fileHeader.bfType = 0x4d42;
-	fileHeader.bfSize = 0;
-	fileHeader.bfReserved1 = 0;
-	fileHeader.bfReserved2 = 0;
-	fileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-
-	infoHeader.biSize = sizeof(infoHeader);
-	infoHeader.biWidth = bitmap_dx;
-	infoHeader.biHeight = bitmap_dy;
-	infoHeader.biPlanes = 1;
-	infoHeader.biBitCount = 24;
-	infoHeader.biCompression = BI_RGB;
-	infoHeader.biSizeImage = 0;
-	infoHeader.biXPelsPerMeter = 0;
-	infoHeader.biYPelsPerMeter = 0;
-	infoHeader.biClrUsed = 0;
-	infoHeader.biClrImportant = 0;
-
-	file.write((char*)&fileHeader, sizeof(fileHeader));
-	file.write((char*)&infoHeader, sizeof(infoHeader));
-
-	// dibsection information
-	BITMAPINFO info;
-	info.bmiHeader = infoHeader;
-
-	// ------------------
-	// THE IMPORTANT CODE
-	// ------------------
-	// create a dibsection and blit the window contents to the bitmap
-	HDC winDC = GetWindowDC(window);
-	HDC memDC = CreateCompatibleDC(winDC);
-	BYTE* memory = 0;
-	HBITMAP bitmap = CreateDIBSection(winDC, &info, DIB_RGB_COLORS, (void**)&memory, 0, 0);
-	SelectObject(memDC, bitmap);
-	BitBlt(memDC, 0, 0, bitmap_dx, bitmap_dy, winDC, 0, 0, SRCCOPY);
-	DeleteDC(memDC);
-	ReleaseDC(window, winDC);
-
-	// save dibsection data
-	int bytes = (((24 * bitmap_dx + 31) & (~31)) / 8)*bitmap_dy;
-	file.write((char*)memory, bytes);
-
-	// HA HA, forgot paste in the DeleteObject lol, happy now ;)?
-	DeleteObject(bitmap);
-}
-
-void pnt(HWND hwnd)
-{
-	CaptureScreen(hwnd, "C:\\d.bmp");
-}
 
 map<int, cip_window_t*> windows;
 DWORD pid = 0;
@@ -208,6 +137,8 @@ void windowFrameLoop()
 	}
 }
 
+HANDLE hPipe;
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -217,13 +148,50 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: 在此放置代码。
-#ifdef __DEV
+
+#ifndef __DEV
+	// check whether user is a cloudware user
 	TCHAR username[50];
 	DWORD usernameSize = 50;
 	GetUserName(username, &usernameSize);
 	if (_tcscmp(username, _T("Administrator")) == 0) {
 		return 0;
 	}
+	TCHAR pipename[128] = _T("\\\\.\\cloudware\\pipe\\");
+	wcscat(pipename, username);
+	while (1) {
+		hPipe = CreateFile(
+			pipename,
+			GENERIC_READ | GENERIC_WRITE,
+			0,
+			NULL,
+			OPEN_EXISTING,
+			0,
+			NULL);
+		if (hPipe != INVALID_HANDLE_VALUE) {
+			break;
+		}
+		// wait 10s if pipe is busy
+		if (!WaitNamedPipe(pipename, 10000)) {
+			return -1;
+		}
+	}
+
+	DWORD dwMode = PIPE_READMODE_MESSAGE;
+	BOOL fSuccess = SetNamedPipeHandleState(
+		hPipe,
+		&dwMode,
+		NULL,
+		NULL);
+	TCHAR program[1024];
+	DWORD cbRead;
+	fSuccess = ReadFile(
+		hPipe,
+		program,
+		1024 * sizeof(TCHAR),
+		&cbRead,
+		NULL);
+
 #endif
 
 	boost::thread thrd(&WsServerThread);
@@ -259,6 +227,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		DWORD dw = GetLastError();
 		printf("err %u\n", dw);
 	}
+#ifndef __DEV
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+
+	CreateProcess(
+		NULL,
+		program,
+		NULL,
+		NULL,
+		FALSE,
+		0,
+		NULL,
+		NULL,
+		&si,
+		&pi);
+#endif
 
 	//EnumWindows(proc, NULL);
 	MSG msg;

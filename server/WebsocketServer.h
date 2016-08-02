@@ -33,7 +33,7 @@ public:
 	WebsocketServer() {
 		// Initialize Asio Transport
 		m_server.init_asio();
-
+		
 		// Register handler callbacks
 		m_server.set_open_handler(bind(&WebsocketServer::on_open, this, ::_1));
 		m_server.set_close_handler(bind(&WebsocketServer::on_close, this, ::_1));
