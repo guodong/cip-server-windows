@@ -157,6 +157,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (_tcscmp(username, _T("Administrator")) == 0) {
 		return 0;
 	}
+
 	TCHAR pipename[128] = _T("\\\\.\\cloudware\\pipe\\");
 	wcscat(pipename, username);
 	while (1) {
