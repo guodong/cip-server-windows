@@ -140,7 +140,7 @@ int cip_window_stream_init(cip_window_t *window)
 	param->b_vfr_input = 0;
 	param->b_repeat_headers = 1;
 	param->b_annexb = 1;
-	param->rc.f_rf_constant = 35;
+	param->rc.f_rf_constant = 24;
 
 	if (x264_param_apply_profile(param, "baseline") < 0) {
 		printf("[Error] x264_param_apply_profile\n");
@@ -236,7 +236,8 @@ void cip_window_frame_send(cip_window_t *window, int force_keyframe)
 	int32_t i_nal = 0;
 
 	HWND hwnd = (HWND)window->wid;
-	HDC winDC = GetWindowDC(hwnd);
+	//HDC winDC = GetWindowDC(hwnd);
+	HDC winDC = GetDC(NULL);
 	if (!winDC) {
 		return;
 	}
@@ -244,7 +245,8 @@ void cip_window_frame_send(cip_window_t *window, int force_keyframe)
 	HBITMAP hbmp = CreateCompatibleBitmap(winDC, width, height);
 	BYTE* memory = 0;
 	SelectObject(memDC, hbmp);
-	PrintWindow(hwnd, memDC, 0);
+	//PrintWindow(hwnd, memDC, 0);
+	BitBlt(memDC, 0, 0, width, height, winDC, window->x, window->y, SRCCOPY);
 
 	BITMAPINFOHEADER bmi = { 0 };
 	bmi.biSize = sizeof(BITMAPINFOHEADER);

@@ -30,7 +30,11 @@ typedef BOOL(CALLBACK *UNINSTALLHOOK)();
 
 void WsServerThread()
 {
+#ifdef __DEV
+	wsServer.run(9002);
+#else
 	wsServer.run(0);
+#endif
 }
 
 #define MAX_LOADSTRING 100
@@ -130,10 +134,10 @@ void windowFrameLoop()
 		for (it = windows.begin(); it != windows.end(); it++) {
 			if (it->second->visible)
 				cip_window_frame_send(it->second, 0);
-			Sleep(10);
+			Sleep(100);
 		}
 		windows_lock.unlock();
-		Sleep(10);
+		Sleep(100);
 	}
 }
 
@@ -276,6 +280,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			if (isTopWindow(hwnd)) {
 				RECT rc;
 				GetWindowRect(hwnd, &rc);
+				RECT winRc;
+				GetWindowRect(hwnd, &winRc);
 				if (rc.left == rc.right || rc.top == rc.bottom) {
 					//break;
 				}
@@ -283,8 +289,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 				cip_window_t *win = (cip_window_t*)malloc(sizeof(cip_window_t));
 				win->wid = (u32)hwnd;
-				win->x = rc.left;
-				win->y = rc.top;
+				win->x = winRc.left;
+				win->y = winRc.top;
 				win->width = rc.right - rc.left;
 				win->height = rc.bottom - rc.top;
 				win->visible = IsWindowVisible(hwnd);
@@ -355,7 +361,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			if (windows.find((int)msg.wParam) == windows.end()) {
 				break;
 			}
-			Sleep(10);
+			Sleep(100);
 			BOOL visible = IsWindowVisible(hwnd);
 			windows[(int)msg.wParam]->visible = visible ? 1 : 0;
 			if (visible) {
@@ -385,11 +391,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			}
 			RECT rc;
 			GetWindowRect(hwnd, &rc);
+			RECT winRc;
+			GetWindowRect(hwnd, &winRc);
 			cip_event_window_configure_t cewc;
 			cewc.type = CIP_EVENT_WINDOW_CONFIGURE;
 			cewc.wid = (u32)hwnd;
-			cewc.x = rc.left;
-			cewc.y = rc.top;
+			cewc.x = winRc.left;
+			cewc.y = winRc.top;
 			cewc.width = rc.right - rc.left;
 			cewc.height = rc.bottom - rc.top;
 			cewc.bare = 1;
